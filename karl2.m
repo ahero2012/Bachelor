@@ -1,14 +1,22 @@
-% run karl
+run karl
 x=xgrid(1,length(xgrid(1,:)));
 y=ygrid(length(ygrid(:,1)),1);
+a=545/40; %[px/mm]
+dt=0.5; %[ms]
+clear l i k 
+%Pixel in Velocity [m/s]
+for i=1:numel(peak)
+   uv{i}=uvec{i}/dt/a;
+   vv{i}=vvec{i}/dt/a;
+end
 clear l i k
 %Total Displacement
-parfor l=1:numel(peak)
-for i=1:length(uvec{1}(1,:))
+for l=1:numel(peak)
+for i=1:length(uv{1}(1,:))
     
-    for k=1:length(uvec{1}(:,1))
-        tot{l}(k,i)=sqrt(uvec{l}(k,i).^2+vvec{l}(k,i).^2);
-        phase{l}(k,i)=atan2(vvec{l}(k,i),uvec{l}(k,i));
+    for k=1:length(uv{1}(:,1))
+        tot{l}(k,i)=sqrt(uv{l}(k,i).^2+vv{l}(k,i).^2);
+        phase{l}(k,i)=atan2(vv{l}(k,i),uv{l}(k,i));
     end
     
 end
@@ -16,13 +24,13 @@ end
 clear l i k
 h=fspecial('gaussian',[3 3],0.3);
 
-for i=1:numel(peak)
-    
-    phase{i}=filter2(h,phase{i});
-    
-end
+% for i=1:numel(peak)
+%     
+%     phase{i}=filter2(h,phase{i});
+%     
+% end
 clear i
-parfor l=1:numel(peak)
+for l=1:numel(peak)
    for i=2:38
        for k=2:30
            if tot{l}(k,i)>=2*max(mean(tot{l}))
@@ -30,52 +38,54 @@ parfor l=1:numel(peak)
             tot{l}(k,i-1) tot{l}(k,i) tot{l}(k,i+1);tot{l}(k+1,i-1) tot{l}(k+1,i) tot{l}(k+1,i-1)]));
            end
 %            if abs(phase{l}(k,i))~=abs(mean())
-%             phase{l}(k,i)=median(median([phase{l}(k-1,i-1) phase{l}(k-1,i) phase{l}(k-1,i+1);...
-%             phase{l}(k,i-1) phase{l}(k,i) phase{l}(k,i+1);phase{l}(k+1,i-1) phase{l}(k+1,i) phase{l}(k+1,i-1)]));
+            phase{l}(k,i)=median(median([phase{l}(k-1,i-1) phase{l}(k-1,i) phase{l}(k-1,i+1);...
+            phase{l}(k,i-1) phase{l}(k,i) phase{l}(k,i+1);phase{l}(k+1,i-1) phase{l}(k+1,i) phase{l}(k+1,i-1)]));
 %            end
-            uvec{l}(k,i)=tot{l}(k,i).*cos(phase{l}(k,i));
-            vvec{l}(k,i)=tot{l}(k,i).*sin(phase{l}(k,i));
+            uv{l}(k,i)=tot{l}(k,i).*cos(phase{l}(k,i));
+            vv{l}(k,i)=tot{l}(k,i).*sin(phase{l}(k,i));
        end
    end
 end
 
 %Filter
-% parfor l=1:numel(peak)
-% for i=2:38
-%     for k=2:30
-% %         if tot{l}(k,i)>=2*max(mean(tot{l}))
-%             uvec{l}(k,i)=median(median([uvec{l}(k-1,i-1) uvec{l}(k-1,i) uvec{l}(k-1,i+1);...
-%             uvec{l}(k,i-1) uvec{l}(k,i) uvec{l}(k,i+1);uvec{l}(k+1,i-1) uvec{l}(k+1,i) uvec{l}(k+1,i-1)]));
-%             vvec{l}(k,i)=median(median([vvec{l}(k-1,i-1) vvec{l}(k-1,i) vvec{l}(k-1,i+1);...
-%             vvec{l}(k,i-1) vvec{l}(k,i) vvec{l}(k,i+1);vvec{l}(k+1,i-1) vvec{l}(k+1,i) vvec{l}(k+1,i-1)]));
-% %             tot{l}(k,i)=max(mean(tot{l}));
-% %         end
-%     end
-% end
-% end
-figure('units','normalized','outerposition',[0 0 1 1])
-[x,y] = meshgrid(1:39,1:31);
 
-    startx = 0.1:0.1:1;
-    starty = ones(size(startx));
+figure('units','normalized','outerposition',[0 0 1 1])
+% [x,y] = meshgrid(1:39,1:31);
+% 
+%     startx = 0.1:0.1:1;
+%     starty = ones(size(startx));
 for i=1:numel(peak)
-   
+   md(i)=max(mean(tot{i}'));
+   mp(i)=mean(mean(phase{i}));
 %     subplot(121)
-    quiver(xgrid,ygrid,uvec{i},vvec{i})
-%     axis([0 x 0 y])
+    quiver(xgrid,ygrid,uv{i},vv{i},1.6)
+    axis([0 x 0 y])
     F1(i)=getframe;
 %     subplot(122)
-    contourf(medfilt2(tot{i}))
-    F2(i)=getframe;
+    contourf((tot{i}))
+%     colormap jet
+%     F2(i)=getframe;
 %     refreshdata
 %   drawnow
     
-    streamline(x,y,uvec{i},vvec{i},startx,starty)
-    F3(i)=getframe;
+%     streamline(x,y,uvec{i},vvec{i},startx,starty)
+%     F3(i)=getframe;
     
 end
+figure('units','normalized','outerposition',[0 0 1 1])
 % subplot(121)
-movie(F1,1,3)
+t=0:0.00013:0.0064;
+s=-0.045*cos(2*pi*150*(t+0.005))+1.085;
+plot(s)
+hold on
+plot(1:numel(peak),smooth(smooth(smooth(md))))
 % subplot(122)
-movie(F2,1,3)
-movie(F3,1,3)
+% plot(1:numel(peak),smooth(smooth(mp)))
+adis=mean(md); %[px/ms]
+% avel=adis/a; %[m/s]
+figure('units','normalized','outerposition',[0 0 1 1])
+movie(F1,3,2)
+
+% movie(F2,1,3)
+% movie(F3,1,3)
+clear i l k
