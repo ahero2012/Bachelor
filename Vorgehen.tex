@@ -17,4 +17,8 @@ Um zwei kurz aufeinanderfolgende Bilder zu bekommen, wird erste Laserpuls am End
 \subsection{Signalverarbeitung am Mikrokontroller}
 Um ein sinnvolles Startsignal für den Trigger der Kamera zu bekommen, wurde als erste Variante der Input und Output am Kontroller gemessen. Da man ein bei einem vielfachen der Periode triggern sollte, um immer am gleichen Punkt im Schwinungszyklus zu sein, wurde mit Hilfe der Kontrollerbox von LabSmith das PWM Signal nach der Periode abgetastet. Mit dem Oszilloskop für die Signaldarstellung wurde die Periode nach der folgenden Formel gemessen.\\
 Da die minimale Distanz der Trigger ms ist, müssen 12 Perioden des Sinussignals abgewartet werden, das bedeutet triggern nach der Formel mit N=12.\\
-Mit zweite Variante wurde durch einen AC/DC Wandler ein manuell einstellbarer Sinus an die Piezo Platten geschickt. Dadurch wurde als Triggersignal die Impulssignale des Wandlers genommen. Hier war gab es nun ein Puls pro Sinus, wodurch jeder Nte Trigger gross genug gewählt wurde um die Auslesezeit der kamera zu berücksichtigen.   
+Mit zweite Variante wurde durch einen AC/DC Wandler ein manuell einstellbarer Sinus an die Piezo Platten geschickt. Dadurch wurde als Triggersignal die Impulssignale des Wandlers genommen. Hier war gab es nun ein Puls pro Sinus, wodurch jeder Nte Trigger gross genug gewählt wurde um die Auslesezeit der kamera zu berücksichtigen.
+\subsection{Umrechnung der Verschiebungen}   
+Da man durch die Analyse der Bildverarbeitung die Auslenkung in Pixel bekommt, muss erst ein Umrechnungsfaktor für die reale Verschiebung in Millimetern gefunden werden. Dafür wurde im gleichen Abstand Lüfter zu Kamera die Kante des Piezo Jets aufgenommen. Diese ist 4cm breit und der Pixelabstand im Bild betrug im Kameraprogramm 545 px. Es ergibt sich als Umrechnungsfaktor:\\
+Um nachher die Geschwindigkeit in m/s zu bekommen, wird wie folgt gerechnet:\\
+Wobei dt dem Belichtungsabstand der Laser entspricht.
