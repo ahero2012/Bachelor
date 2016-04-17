@@ -24,8 +24,9 @@ end
 end
 
 for l=1:numel(files)
-   for i=2:30
-       for k=2:38
+    for p=0:1
+   for i=2+p:2:30
+       for k=2+p:2:38
 %            if tot{l}(k,i)>=2*max(mean(tot{l}))
             tot{l}(k,i)=median(median([tot{l}(k-1,i-1) tot{l}(k-1,i) tot{l}(k-1,i+1);...
             tot{l}(k,i-1) tot{l}(k,i) tot{l}(k,i+1);tot{l}(k+1,i-1) tot{l}(k+1,i) tot{l}(k+1,i-1)]));
@@ -38,6 +39,7 @@ for l=1:numel(files)
             displ{l}(1,k,i)=tot{l}(k,i).*sin(phase{l}(k,i));
        end
    end
+    end
 end
 %Display results
 clear i
@@ -54,7 +56,7 @@ clear i
 figure(2)
 for i = 1:numel(files)
     subplot(2,2,i)
-    quiver(squeeze(displ{1,i}(2,:,:)),squeeze(displ{1,i}(1,:,:)))
+    quiver(squeeze(displ{1,i}(2,:,:)),squeeze(displ{1,i}(1,:,:)),5)
     axis([1 31 1 39])
     title(files(i).name)
 end
@@ -90,7 +92,7 @@ axis([1 31 1 39])
 subplot(121)
 x=linspace(1,39,39);
 y=linspace(1,31,31);
-quiver(y,x,vvec,uvec)
+quiver(y,x,vvec,uvec,5)
 axis([1 31 1 39])
 % quiver(vvec,uvec,10)
 % figure(4)
