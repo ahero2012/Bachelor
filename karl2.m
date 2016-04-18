@@ -22,14 +22,7 @@ for i=1:length(uv{1}(1,:))
 end
 end
 clear l i k
-h=fspecial('gaussian',[3 3],0.3);
-
-% for i=1:numel(peak)
-%     
-%     phase{i}=filter2(h,phase{i});
-%     
-% end
-clear i
+%Filtering Vectordata
 for l=1:numel(peak)
    for i=2:38
        for k=2:30
@@ -37,38 +30,29 @@ for l=1:numel(peak)
             tot{l}(k,i)=median(median([tot{l}(k-1,i-1) tot{l}(k-1,i) tot{l}(k-1,i+1);...
             tot{l}(k,i-1) tot{l}(k,i) tot{l}(k,i+1);tot{l}(k+1,i-1) tot{l}(k+1,i) tot{l}(k+1,i-1)]));
            end
-%            if abs(phase{l}(k,i))~=abs(mean())
+            
             phase{l}(k,i)=median(median([phase{l}(k-1,i-1) phase{l}(k-1,i) phase{l}(k-1,i+1);...
             phase{l}(k,i-1) phase{l}(k,i) phase{l}(k,i+1);phase{l}(k+1,i-1) phase{l}(k+1,i) phase{l}(k+1,i-1)]));
-%            end
+
             uv{l}(k,i)=tot{l}(k,i).*cos(phase{l}(k,i));
             vv{l}(k,i)=tot{l}(k,i).*sin(phase{l}(k,i));
        end
    end
 end
 
-%Filter
-
 figure('units','normalized','outerposition',[0 0 1 1])
-% [x,y] = meshgrid(1:39,1:31);
-% 
-%     startx = 0.1:0.1:1;
-%     starty = ones(size(startx));
+
 for i=1:numel(peak)
-   md(i)=max(mean(tot{i}'));
-   mp(i)=mean(mean(phase{i}));
-%     subplot(121)
+    md(i)=max(mean(tot{i}'));
+    mp(i)=mean(mean(phase{i}));
+    subplot(121)
     quiver(xgrid,ygrid,uv{i},vv{i},1.6)
     axis([0 x 0 y])
     F1(i)=getframe;
-%     subplot(122)
+    subplot(122)
     contourf((tot{i}))
-%     colormap jet
-%     F2(i)=getframe;
-%     refreshdata
-%   drawnow
-    
-%     streamline(x,y,uvec{i},vvec{i},startx,starty)
+    colormap jet
+    F2(i)=getframe;
 %     F3(i)=getframe;
     
 end
@@ -80,9 +64,9 @@ plot(s)
 hold on
 plot(1:numel(peak),smooth(smooth(smooth(md))))
 % subplot(122)
-% plot(1:numel(peak),smooth(smooth(mp)))
-adis=mean(md); %[px/ms]
-% avel=adis/a; %[m/s]
+
+avel=mean(md); %[m/s]
+
 figure('units','normalized','outerposition',[0 0 1 1])
 movie(F1,3,2)
 
